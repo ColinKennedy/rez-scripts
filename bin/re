@@ -10,7 +10,7 @@ full_path=$stage_path:`get_release_path`
 
 # Reference: https://stackoverflow.com/a/7989493/3626104
 if [ $# -lt 1 ]; then
-    package_name=`get_local_rez_package`
+    package_name=`get_local_rez_package $PWD`
 else
     package_name="${@}"
 fi

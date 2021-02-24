@@ -33,14 +33,22 @@ do_test() {
 
 # Reference: https://stackoverflow.com/a/7989493/3626104
 if [ $# -lt 2 ]; then
-    nearest_package=`find_nearest_rez_package`
+    nearest_package=`find_nearest_rez_package $PWD`
+
+    if [ -z "$nearest_package" ]
+    then
+        echo >&2 "No Rez package could be auto-detected."
+
+        exit 1
+    fi
+
     cd `dirname $nearest_package`  # We cd into the package before tests run
 
     if ! [ -z "$nearest_package" ]
     then
-        package_name=`get_local_rez_package`
+        package_name=`get_local_rez_package $PWD`
     else
-        echo "echo \"You are not located inside of a Rez package\"" >&2
+        echo "You are not located inside of a Rez package" >&2
 
         exit 1
     fi

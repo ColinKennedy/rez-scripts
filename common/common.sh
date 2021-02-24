@@ -7,7 +7,7 @@ endswith() {
 
 # Reference: https://unix.stackexchange.com/a/22215/290614
 find_up() {
-    path=$(pwd)
+    path=$2
 
     while [[ "$path" != "" && ! -e "$path/$1" ]]; do
         path=${path%/*}
@@ -21,11 +21,11 @@ find_up() {
 
 
 find_nearest_rez_package() {
-    package=`find_up $1package.py`
+    package=`find_up package.py $1`
 
     if [ -z "$package" ]
     then
-        package=`find_up $1package.yaml`
+        package=`find_up package.yaml $1`
     fi
 
     echo $package
@@ -33,29 +33,30 @@ find_nearest_rez_package() {
 
 
 get_local_rez_package() {
-	package_file=`find_nearest_rez_package $PWD`
-	output=""
+    directory=$1
+    package_file=`find_nearest_rez_package $directory`
+    output=""
 
-	if [ -z "$package_file" ]
-	then
-		echo >&2 "The current directory is not in a Rez package"
+    if [ -z "$package_file" ]
+    then
+        echo >&2 "The current directory is not in a Rez package"
 
-		return
-	fi
+        return
+    fi
 
-	if endswith $package_file ".py"
-	then
-		name=`grep "^name" $package_file | sed -e "s/name\s*=\s*[\"']//" -e "s/[\"']\s*$//"`
-	elif endswith $package_file ".yaml"
-	then
-		name=`grep "^name" $package_file | sed -e "s/name\s*:\s*[\"']//" -e "s/[\"']//"`
-	else
-		echo >&2 "Package \"$package_file\" could not processed."
+    if endswith $package_file ".py"
+    then
+        name=`grep "^name" $package_file | sed -e "s/name\s*=\s*[\"']//" -e "s/[\"']\s*$//"`
+    elif endswith $package_file ".yaml"
+    then
+        name=`grep "^name" $package_file | sed -e "s/name\s*:\s*[\"']//" -e "s/[\"']//"`
+    else
+        echo >&2 "Package \"$package_file\" could not processed."
 
-		return
-	fi
+        return
+    fi
 
-	echo $name
+    echo $name
 }
 
 

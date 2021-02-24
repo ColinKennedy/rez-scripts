@@ -7,7 +7,7 @@ branch_name=`git rev-parse --abbrev-ref HEAD`
 stage_path=~/scratch/$branch_name
 full_path=$stage_path:`get_release_path`
 
-nearest_package=`find_nearest_rez_package`
+nearest_package=`find_nearest_rez_package $PWD`
 cd `dirname $nearest_package`  # We cd into the package before the build runs
 
 echo "Building to local stage: $stage_path"
