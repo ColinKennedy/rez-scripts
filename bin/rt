@@ -1,30 +1,7 @@
 #!/usr/bin/env sh
 
-# Reference: https://unix.stackexchange.com/a/22215/290614
-find_up() {
-    path=$(pwd)
-
-    while [[ "$path" != "" && ! -e "$path/$1" ]]; do
-        path=${path%/*}
-    done
-
-    if ! [ -z $path ]
-    then
-        echo $path/$1
-    fi
-}
-
-
-find_nearest_rez_package() {
-    package=`find_up $1package.py`
-
-    if [ -z "$package" ]
-    then
-        package=`find_up $1package.yaml`
-    fi
-
-    echo $package
-}
+current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $current_directory/../common/common.sh
 
 
 do_test() {
@@ -61,7 +38,7 @@ if [ $# -lt 2 ]; then
 
     if ! [ -z "$nearest_package" ]
     then
-        package_name=`sed -n '/name\s*=\s*/p' $nearest_package | sed "s/name\s*=\s*[\"']//g ; s/[\"']$//"`
+        package_name=`get_local_rez_package`
     else
         echo "echo \"You are not located inside of a Rez package\"" >&2
 
