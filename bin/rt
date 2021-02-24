@@ -1,0 +1,98 @@
+#!/usr/bin/env sh
+
+# Reference: https://unix.stackexchange.com/a/22215/290614
+find_up() {
+    path=$(pwd)
+
+    while [[ "$path" != "" && ! -e "$path/$1" ]]; do
+        path=${path%/*}
+    done
+
+    if ! [ -z $path ]
+    then
+        echo $path/$1
+    fi
+}
+
+
+find_nearest_rez_package() {
+    package=`find_up $1package.py`
+
+    if [ -z "$package" ]
+    then
+        package=`find_up $1package.yaml`
+    fi
+
+    echo $package
+}
+
+
+do_test() {
+    # Run som rez-test command for a particular path / Rez package / test suite.
+    #
+    # Args:
+    #     stage_path (str):
+    #         The path on-disk to your local Rez package build.
+    #     package_name (str):
+    #         The package to run tests on.
+    #     test_names (str, optional):
+    #         The test / tests to run, if any. When nothing is given,
+    #         the entire Rez package's test suite gets run (minus any
+    #         test whose "run_on" value is set to "explicit".
+    #
+    stage_path=$1
+    package_name=$2
+    test_names="${@:3}"
+
+    echo "Testing local stage: $stage_path"
+    echo "REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-test $package_name $test_names"
+
+    REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-test $package_name $test_names
+
+    echo "Completed"
+    echo "REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-test $package_name $test_names"
+}
+
+
+# Reference: https://stackoverflow.com/a/7989493/3626104
+if [ $# -lt 2 ]; then
+    nearest_package=`find_nearest_rez_package`
+    cd `dirname $nearest_package`  # We cd into the package before tests run
+
+    if ! [ -z "$nearest_package" ]
+    then
+        package_name=`sed -n '/name\s*=\s*/p' $nearest_package | sed "s/name\s*=\s*[\"']//g ; s/[\"']$//"`
+    else
+        echo "echo \"You are not located inside of a Rez package\"" >&2
+
+        exit 1
+    fi
+
+    test_query=$1
+else
+    package_name=$1
+    test_query=$2
+fi
+
+branch_name=`git rev-parse --abbrev-ref HEAD`
+stage_path=~/scratch/$branch_name
+
+if [[ $test_query == *"*"* ]]; then
+    options=`REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-test --list $package_name`
+    # Reference: https://unix.stackexchange.com/a/163814/290614
+    tests=`echo $options | tr ' ' '\n' | grep $test_query`
+
+    if [[ -z "$tests" ]]; then
+        echo "Your query \"$test_query\" found no tests. Options were \"$options\""
+
+        exit 1
+    fi
+else
+    tests=($test_query)
+fi
+
+if [[ -z "$tests" ]]; then
+    do_test $stage_path $package_name
+else
+    do_test $stage_path $package_name $tests
+fi

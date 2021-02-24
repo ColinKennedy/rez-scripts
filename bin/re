@@ -1,0 +1,90 @@
+#!/usr/bin/env sh
+
+
+endswith() {
+	case $1 in
+	  *"$2") return 0;;
+	  *)    return 1;;
+	esac
+}
+
+_get_nearest_rez_package() {
+	directory=$1
+
+	if [ -z "$directory" ]
+	then
+		echo >&2 "Directory cannot be empty. No Rez package could be found."
+		echo ""
+		return
+	fi
+
+	if [ "$directory" == "/" ]
+	then
+		echo >&2 "Root directory cannot be given. No Rez package could be found."
+		echo ""
+		return
+	fi
+
+	if [ -e $directory/package.py ]
+	then
+		echo $directory/package.py
+
+		return
+	elif [ -e $directory/package.yaml ]
+	then
+		echo $directory/package.py
+
+		return
+	fi
+
+	parent_directory=`dirname $directory`
+
+	echo `_get_nearest_rez_package $parent_directory`
+}
+
+
+_get_local_rez_package() {
+	package_file=`_get_nearest_rez_package $PWD`
+	output=""
+
+	if [ -z "$package_file" ]
+	then
+		echo >&2 "The current directory is not in a Rez package"
+
+		return
+	fi
+
+	if endswith $package_file ".py"
+	then
+		name=`grep "^name" $package_file | sed -e "s/name\s*=\s*[\"']//" -e "s/[\"']\s*$//"`
+	elif endswith $package_file ".yaml"
+	then
+		name=`grep "^name" $package_file | sed -e "s/name\s*:\s*[\"']//" -e "s/[\"']//"`
+	else
+		echo >&2 "Package \"$package_file\" could not processed."
+
+		return
+	fi
+
+	echo $name
+}
+
+
+branch_name=`git rev-parse --abbrev-ref HEAD`
+stage_path=~/scratch/$branch_name
+# Reference: https://stackoverflow.com/a/7989493/3626104
+if [ $# -lt 1 ]; then
+    package_name=`_get_local_rez_package`
+else
+    package_name="${@}"
+fi
+
+shell=bash
+
+echo "Resolving to local stage: $stage_path"
+echo "REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-env $package_name --shell $shell"
+
+REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-env $package_name --shell $shell
+
+echo "Completed"
+echo "REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-env $package_name --shell $shell"

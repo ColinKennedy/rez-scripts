@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+
+# Reference: https://unix.stackexchange.com/a/22215/290614
+find_up() {
+    path=$(pwd)
+
+    while [[ "$path" != "" && ! -e "$path/$1" ]]; do
+        path=${path%/*}
+    done
+
+    if ! [ -z $path ]
+    then
+        echo $path/$1
+    fi
+}
+
+
+find_nearest_rez_package() {
+    package=`find_up $1package.py`
+
+    if [ -z "$package" ]
+    then
+        package=`find_up $1package.yaml`
+    fi
+
+    echo $package
+}
+
+branch_name=`git rev-parse --abbrev-ref HEAD`
+stage_path=~/scratch/$branch_name
+
+nearest_package=`find_nearest_rez_package`
+cd `dirname $nearest_package`  # We cd into the package before the build runs
+
+echo "Building to local stage: $stage_path"
+echo "REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-build --clean --install --prefix $stage_path"
+
+REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-build --clean --install --prefix $stage_path
+
+echo "Completed"
+echo "REZ_PACKAGES_PATH=$stage_path:~/.rez/packages/int rez-build --clean --install --prefix $stage_path"
