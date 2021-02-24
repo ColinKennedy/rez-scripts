@@ -5,7 +5,8 @@ without a little tooling. This repository provides some nice scripts to
 do that.
 
 # Requirements
-- [Rez](https://github.com/nerdvegas/rez).
+- [Rez](https://github.com/nerdvegas/rez)
+- [git](https://github.com/git/git)
 - bash (as an executable shell)
 - various core tools, like `cd`, `dirname`, and the like (you probably already have them)
 
