@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+function join_by { local d=$1; shift; local f=$1; shift; printf %s "$f" "${@/#/$d}"; }
+
+
 current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $current_directory/../common/common.sh
 
@@ -16,4 +19,7 @@ fi
 
 package_name=`get_local_rez_package $PWD`
 nearest_package=`find_nearest_rez_package $PWD`
-REZ_PACKAGES_PATH=`dirname $nearest_package` rez-view --brief $package_name | awk --assign=request="$request" -f $parser
+requirements=$(REZ_PACKAGES_PATH=`dirname $nearest_package` rez-view --brief $package_name | awk --assign=request="$request" -f $parser)
+`echo $requirements | sort | uniq)
+
+echo `join_by $requirements`
