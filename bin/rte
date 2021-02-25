@@ -7,6 +7,7 @@ current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $current_directory/../common/common.sh
 
 
+stage_path=${PERSONAL_WORK_AREA:-~/scratch}/$branch_name
 parser=$current_directory/../common/rez_yaml_tester.awk
 request=$1
 
@@ -33,8 +34,6 @@ then
 
     exit 1
 fi
-
-# REZ_PACKAGES_PATH=$(dirname $(dirname $nearest_package)) rez-view $package_name 2> /dev/null | awk --assign=request="$request" --file $parser
 
 requirements=$(REZ_PACKAGES_PATH=$(dirname $(dirname $nearest_package)) rez-view $package_name 2> /dev/null | awk --assign=request="$request" --file $parser)
 

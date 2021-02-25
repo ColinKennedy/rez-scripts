@@ -13,7 +13,7 @@ do just that.
 - various core tools, like `cd`, `dirname`, and the like (you probably already have them)
 
 
-# Basic Setup
+# Installation
 ```sh
 git clone https://github.com/ColinKennedy/rez-scripts
 echo "export PATH=$PWD/rez-scripts/bin:\$PATH" >> ~/.profile
@@ -22,6 +22,15 @@ echo "export PATH=$PWD/rez-scripts/bin:\$PATH" >> ~/.profile
 
 The echo line makes sure, whenever a terminal starts up, the commands
 are visible to Linux.
+
+
+# Quick Explanation
+Every command in this repository works based on a work area. In this
+case, "work area" just means "a dedicated folder where changes are built
+to". The work area has the same as your local git branch, which means
+the work area functions even if you modify Rez packages located in
+different git repositories. As long as the branch name is consistent,
+everything works.
 
 
 ## rt
@@ -88,3 +97,25 @@ A variation of ``rbs`` which includes a ``--symlink`` flag, which can
 be used to tell Rez to only symlink built packages, instead of copying.
 Your build system needs to respect that flag for this command to be
 useful. Otherwise, use ``rbs``.
+
+
+# Setup
+These tools assume that you are using Rez in a git environment. Make
+sure to name your git branch something sensible. For example, if you
+work off of tickets in Jira and your project key is "AS", naming a
+branch like "AS-1234-some_description" is a good idea.
+
+Your branch name doubles as your workspace name. So keep it descriptive!
+
+
+# Customization
+Every command in this repository works based on a work area. In this
+case, "work area" just means "a dedicated folder".
+
+You can change this folder by setting ``$PERSONAL_WORK_AREA``
+
+```sh
+export PERSONAL_WORK_AREA=~/some/custom/location
+```
+
+If ``$PERSONAL_WORK_AREA`` is not defined, ``~/scratch`` is used as a fallback.

@@ -5,7 +5,7 @@ source $current_directory/../common/common.sh
 
 
 branch_name=`git rev-parse --abbrev-ref HEAD`
-stage_path=~/scratch/$branch_name
+stage_path=${PERSONAL_WORK_AREA:-~/scratch}/$branch_name
 full_path=$stage_path:`get_release_path`
 
 nearest_package=`find_nearest_rez_package $PWD`
