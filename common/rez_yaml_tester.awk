@@ -22,18 +22,32 @@ function get_requirements(result)
         if ($0 ~ "^    requires:")
         {
             requirements_found=1
+
             getline
 
             continue
         }
 
-        if ($0 ~ "^  \\w+")
+        if ($0 ~ "^  \\w+" || $0 ~ "^base")
         {
             # We've reached the end of the test definition
             return
         }
 
         getline
+
+        # Check if the next line is ALSO a request match. And if so, recurse.
+        if ($0 ~ "^  " request ":$")
+        {
+            getline
+            split("", new_result)
+            get_requirements(new_result)
+
+            for (requirement in new_result)
+            {
+                print new_result[requirement]
+            }
+        }
     }
 }
 
