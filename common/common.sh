@@ -63,3 +63,30 @@ get_local_rez_package() {
 get_release_path() {
     echo `rez-config | grep "^release_packages_path: " | cut -d" " -f 2`
 }
+
+
+do_test() {
+    # Run som rez-test command for a particular path / Rez package / test suite.
+    #
+    # Args:
+    #     stage_path (str):
+    #         The path on-disk to your local Rez package build.
+    #     package_name (str):
+    #         The package to run tests on.
+    #     test_names (str, optional):
+    #         The test / tests to run, if any. When nothing is given,
+    #         the entire Rez package's test suite gets run (minus any
+    #         test whose "run_on" value is set to "explicit".
+    #
+    stage_path=$1
+    package_name=$2
+    test_names="${@:3}"
+
+    echo "Testing local stage: $stage_path"
+    echo "REZ_PACKAGES_PATH=$stage_path:`get_release_path` rez-test $package_name $test_names"
+
+    REZ_PACKAGES_PATH=$stage_path:`get_release_path` rez-test $package_name $test_names
+
+    echo "Completed"
+    echo "REZ_PACKAGES_PATH=$stage_path:`get_release_path` rez-test $package_name $test_names"
+}

@@ -17,9 +17,49 @@ then
     exit 1
 fi
 
+if [[ $request == *"*"* ]]; then
+    # Make querying tests a bit easier by auto-prepending .*
+    # So we pretend that test queries are glob expressions, not regex.
+    #
+    request=`echo $request | sed "s/*/.*/g"`
+fi
+
 package_name=`get_local_rez_package $PWD`
 nearest_package=`find_nearest_rez_package $PWD`
-requirements=$(REZ_PACKAGES_PATH=`dirname $nearest_package` rez-view --brief $package_name | awk --assign=request="$request" -f $parser)
-`echo $requirements | sort | uniq)
 
-echo `join_by $requirements`
+if [ -z $nearest_package ]
+then
+    echo >&2 "Cannot continue."
+
+    exit 1
+fi
+
+# REZ_PACKAGES_PATH=$(dirname $(dirname $nearest_package)) rez-view $package_name 2> /dev/null | awk --assign=request="$request" --file $parser
+
+requirements=$(REZ_PACKAGES_PATH=$(dirname $(dirname $nearest_package)) rez-view $package_name 2> /dev/null | awk --assign=request="$request" --file $parser)
+
+if [ -z "$requirements" ]
+then
+    options=$(REZ_PACKAGES_PATH=$stage_path:$(get_release_path) rez-test --list $package_name)
+    # Reference: https://unix.stackexchange.com/a/163814/290614
+    tests=`echo $options | tr ' ' '\n' | grep $request`
+
+    if [[ -z "$tests" ]]; then
+        echo >&2 "Your request \"$request\" found no tests. Options were \"$options\""
+
+        exit 1
+    fi
+fi
+
+requirements=`echo $requirements | sort | uniq`
+packages="$package_name `join_by " " "$requirements"`"
+shell=bash
+full_path=$stage_path:`get_release_path`
+
+echo "Resolving to local stage: $stage_path"
+echo "REZ_PACKAGES_PATH=$full_path rez-env $packages --shell $shell"
+
+REZ_PACKAGES_PATH=$full_path rez-env $packages --shell $shell
+
+echo "Completed"
+echo "REZ_PACKAGES_PATH=$full_path rez-env $packages --shell $shell"
