@@ -1,8 +1,10 @@
-rez-scripts is a small, TD-focused extension of [Rez](https://github.com/nerdvegas/rez).
+rez-scripts is a small, TD-focused extension of
+[Rez](https://github.com/nerdvegas/rez).
 
-Rez is a great tool, but for developers, it can be a bit hard to work
+Rez is a great tool but, for developers, it can be a bit hard to work
 without a little tooling. This repository provides some nice scripts to
-do that.
+do just that.
+
 
 # Requirements
 - [Rez](https://github.com/nerdvegas/rez)
@@ -43,13 +45,46 @@ cd /path/to/some/rez/package
 rt unittests_python_*
 ```
 
-## rte
-Similar to rt but, instead of 
 
-## re
+## rte
+Similar to rt but, instead of calling the rez-test commands, it calls
+rez-env **with** the same environment of the rez-test commands that
+you've chosen.
+
+This can be a huge time saver when you're trying to debug a failing test
+and you don't want to wait to resolve over and over again. Or you want
+to run a command within a test environment which isn't the same command
+as the one that you've defined in your ``tests`` attribute.
+
+```sh
+# Assuming you have rez-test keys
+#
+# ["isort", "pydocstyle", "pylint", "unittests_python_2", "unittests_python_3"]
+#
+rte unittest_python_2  # Creates an environment with your package + "unittest"
+rte py*  # Your package + all requiremesnt for "pylint" + "pydocstyle" rez-tests
+rte u*2  # Your package + the "unittests_python_2" environment
+```
 
 
 ## rbs
+A rez-build wrapper which builds your package to a scratch workspace.
+This command is designed to isolate your environment. Your environment
+will only ever be the centralized Rez packages that come with your
+environment + your local changes. This is a great way to make sure your
+changes work in isolation before doing a release. ``re``, ``rt``, and
+``rte`` also respect this workspace location so you can very easily
+run any combination of these commands and be sure that you have an
+environment that only contains the changes that you want to test and
+nothing else.
+
+```sh
+rbs
+```
 
 
 ## rb
+A variation of ``rbs`` which includes a ``--symlink`` flag, which can
+be used to tell Rez to only symlink built packages, instead of copying.
+Your build system needs to respect that flag for this command to be
+useful. Otherwise, use ``rbs``.
