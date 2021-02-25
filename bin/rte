@@ -18,13 +18,6 @@ then
     exit 1
 fi
 
-if [[ $request == *"*"* ]]; then
-    # Make querying tests a bit easier by auto-prepending .*
-    # So we pretend that test queries are glob expressions, not regex.
-    #
-    request=`echo $request | sed "s/*/.*/g"`
-fi
-
 package_name=`get_local_rez_package $PWD`
 nearest_package=`find_nearest_rez_package $PWD`
 

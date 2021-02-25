@@ -51,7 +51,7 @@ rt unittests_python_2
 Call a range of tests
 ```sh
 cd /path/to/some/rez/package
-rt unittests_python_*
+rt unittests_python_.*
 ```
 
 
@@ -71,8 +71,8 @@ as the one that you've defined in your ``tests`` attribute.
 # ["isort", "pydocstyle", "pylint", "unittests_python_2", "unittests_python_3"]
 #
 rte unittest_python_2  # Creates an environment with your package + "unittest"
-rte py*  # Your package + all requiremesnt for "pylint" + "pydocstyle" rez-tests
-rte u*2  # Your package + the "unittests_python_2" environment
+rte py.*  # Your package + all requiremesnt for "pylint" + "pydocstyle" rez-tests
+rte u.*2  # Your package + the "unittests_python_2" environment
 ```
 
 
