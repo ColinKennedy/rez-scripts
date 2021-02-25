@@ -58,7 +58,7 @@ BEGIN {
     {
         if ($0 ~ /^ /)
         {
-            if ($0 ~ "^  blac.*:$")
+            if ($0 ~ "^  " request ":$")
             {
                 getline
                 split("", result)

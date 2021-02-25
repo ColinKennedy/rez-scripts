@@ -8,6 +8,14 @@ stage_path=~/scratch/$branch_name
 full_path=$stage_path:`get_release_path`
 
 nearest_package=`find_nearest_rez_package $PWD`
+
+if [ -z $nearest_package ]
+then
+    echo >&2 "Cannot continue."
+
+    exit 1
+fi
+
 cd `dirname $nearest_package`  # We cd into the package before the build runs
 
 echo "Building to local stage: $stage_path"

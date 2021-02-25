@@ -10,7 +10,7 @@ source $current_directory/../common/common.sh
 parser=$current_directory/../common/rez_yaml_tester.awk
 request=$1
 
-if [ -z "$request" == "" ]
+if [ -z "$request" ]
 then
     echo >&2 "You must specify a test name to resolve as."
 
