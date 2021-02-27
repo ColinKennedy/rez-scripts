@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $current_directory/../common/common.sh
+
+nearest_package=`find_nearest_rez_package`
+
+
+if ! [ -z "$nearest_package" ]
+then
+	root=`dirname $nearest_package`
+	echo "cd $root"
+else
+	echo "echo \"You are not located inside of a Rez package\""
+fi
