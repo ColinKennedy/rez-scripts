@@ -61,7 +61,23 @@ get_local_rez_package() {
 
 
 get_release_path() {
-    echo `rez-config | grep "^release_packages_path: " | cut -d" " -f 2`
+    if [ -n "$REZ_RELEASE_PACKAGES_PATH" ]
+    then
+        echo $REZ_RELEASE_PACKAGES_PATH
+
+        return
+    fi
+
+    if test -f ~/.rezconfig
+    then
+        # This is the default Rez release path
+        echo "~/.rez/packages/int"
+
+        return
+    fi
+
+    # Query the user's release packages path
+    echo `rez-config release_packages_path`
 }
 
 

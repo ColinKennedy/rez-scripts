@@ -94,11 +94,24 @@ rbs
 ```
 
 
-## rb
+## bin/rb
 A variation of ``rbs`` which includes a ``--symlink`` flag, which can
 be used to tell Rez to only symlink built packages, instead of copying.
 Your build system needs to respect that flag for this command to be
 useful. Otherwise, use ``rbs``.
+
+
+## rcd
+``rcd`` is an alias. If you're somewhere within a Rez package directory
+and call ``rcd``, you'll then cd to directory which contains the
+package.py / package.yaml.
+
+To add this alias, run this:
+
+```sh
+echo "alias rcd=\`$PWD/rez-scripts-bin/_rcd\`" >> ~/.bashrc  # Bash users
+echo "alias rcd=\`$PWD/rez-scripts-bin/_rcd\`" >> ~/.zshrc  # Zsh users
+```
 
 
 # Setup
