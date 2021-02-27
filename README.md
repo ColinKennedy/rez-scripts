@@ -33,7 +33,7 @@ different git repositories. As long as the branch name is consistent,
 everything works.
 
 
-## rt
+## bin/rt
 This command wraps `rez-test`. Here's what it can do
 
 Call all non-explicit Rez test commands, for the current package
@@ -55,7 +55,7 @@ rt unittests_python_.*
 ```
 
 
-## rte
+## bin/rte
 Similar to rt but, instead of calling the rez-test commands, it calls
 rez-env **with** the same environment of the rez-test commands that
 you've chosen.
@@ -77,7 +77,7 @@ rte u.*2  # Your package + the "unittests_python_2" environment
 ```
 
 
-## rbs
+## bin/rbs
 A rez-build wrapper which builds your package to a scratch workspace.
 This command is designed to isolate your environment. Your environment
 will only ever be the centralized Rez packages that come with your
