@@ -19,10 +19,12 @@ fi
 
 cd `dirname $nearest_package`  # We cd into the package before the build runs
 
-echo "Building to local stage: $stage_path"
-echo "REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $@"
+arguments=$@
 
-REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $@
+echo "Building to local stage: $stage_path"
+echo "REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $arguments"
+
+REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $arguments
 
 echo "Completed"
-echo "REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $@"
+echo "REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $arguments"
