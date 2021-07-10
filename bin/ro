@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $current_directory/../common/common.sh
+
+
+branch_name=`git rev-parse --abbrev-ref HEAD`
+stage_path=${PERSONAL_WORK_AREA:-~/scratch}/$branch_name
+full_path=$stage_path:`get_release_path`
+
+package_name=`get_local_package_name $PWD`
+package_version=`get_local_package_version $PWD`
+
+if [ -z "$package_name" ]
+then
+	echo >&2 "No found name. Exiting."
+
+	exit 1
+fi
+
+if [ -z "$package_version" ]
+then
+	echo >&2 "No found version. Exiting."
+
+	exit 2
+fi
+
+echo `find_nearest_rez_package "$stage_path/$package_name/$package_version"`
