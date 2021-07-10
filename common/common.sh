@@ -60,6 +60,34 @@ get_local_package_name() {
 }
 
 
+get_local_package_version() {
+    directory=$1
+    package_file=`find_nearest_rez_package $directory`
+    output=""
+
+    if [ -z "$package_file" ]
+    then
+        echo >&2 "The current directory is not in a Rez package"
+
+        return
+    fi
+
+    if endswith $package_file ".py"
+    then
+        version=`grep "^version" $package_file | sed -e "s/version\s*=\s*[\"']//" -e "s/[\"']\s*$//"`
+    elif endswith $package_file ".yaml"
+    then
+        version=`grep "^version" $package_file | sed -e "s/version\s*:\s*[\"']//" -e "s/[\"']//"`
+    else
+        echo >&2 "Package \"$package_file\" could not be processed to find a version."
+
+        return
+    fi
+
+    echo $version
+}
+
+
 get_release_path() {
     if [ -n "$REZ_RELEASE_PACKAGES_PATH" ]
     then
