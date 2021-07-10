@@ -22,7 +22,7 @@ if [ $# -lt 2 ]; then
 
     if ! [ -z "$nearest_package" ]
     then
-        package_name=`get_local_rez_package $PWD`
+        package_name=`get_local_package_name $PWD`
     else
         echo "You are not located inside of a Rez package" >&2
 

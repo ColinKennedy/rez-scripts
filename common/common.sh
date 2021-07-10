@@ -32,7 +32,7 @@ find_nearest_rez_package() {
 }
 
 
-get_local_rez_package() {
+get_local_package_name() {
     directory=$1
     package_file=`find_nearest_rez_package $directory`
     output=""

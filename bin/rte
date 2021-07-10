@@ -19,7 +19,7 @@ then
     exit 1
 fi
 
-package_name=`get_local_rez_package $PWD`
+package_name=`get_local_package_name $PWD`
 nearest_package=`find_nearest_rez_package $PWD`
 
 if [ -z $nearest_package ]
