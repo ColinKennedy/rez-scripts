@@ -110,5 +110,8 @@ get_release_path() {
 
 
 set_config() {
-    export REZ_CONFIG_FILE=${PERSONAL_CONFIG_FILE-~/rezconfig.py}:$REZ_CONFIG_FILE
+    current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    parent=`dirname $current_directory`
+
+    export REZ_CONFIG_FILE=${PERSONAL_CONFIG_FILE-$parent/python/rezconfig.py}:$REZ_CONFIG_FILE
 }
