@@ -19,10 +19,6 @@ find_up() {
     fi
 }
 
-set_config() {
-	export REZ_CONFIG_FILE=${PERSONAL_CONFIG_FILE-~/rezconfig.py}:$REZ_CONFIG_FILE
-}
-
 
 find_nearest_rez_package() {
     package=`find_up package.py $1`
@@ -110,4 +106,9 @@ get_release_path() {
 
     # Query the user's release packages path
     echo `rez-config release_packages_path`
+}
+
+
+set_config() {
+    export REZ_CONFIG_FILE=${PERSONAL_CONFIG_FILE-~/rezconfig.py}:$REZ_CONFIG_FILE
 }
