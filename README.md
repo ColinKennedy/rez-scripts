@@ -88,11 +88,13 @@ was installed to.
 
 
 ## bin/rp
-It's very common while working with these commands to call ``rb`` and then
-quickly a way to send replicate this environment for other users for testing.
+It's very common while working with these scripts to call ``rb`` and then hand
+off your new, isolated environment for artist / TD testing. 
 
-Calling ``ro`` will return a REZ_PACKAGES_PATH setting which will replicate
-your work area.
+Calling ``ro`` will return a REZ_PACKAGES_PATH environment variable which
+replicates your current set-up. As long as your Rez packages are accessible to
+other users, they can take that environment variable and use your installed
+packages.
 
 You can use this to copy to your clipboard, for easy copy / pasting
 
@@ -176,3 +178,22 @@ You can change this folder location by setting ``$PERSONAL_WORK_AREA``
 ```sh
 export PERSONAL_WORK_AREA=~/some/custom/location
 ```
+
+Imagine you have a coworker that would like to test-load your Rez set up.
+$PERSONAL_WORK_AREA defaults to your home folder and usually, your home folder
+isn't accessible to other users.  But no worries, all you have to do is set
+PERSONAL_WORK_AREA to some network location and everything will work the same.
+
+```sh
+cd /some/rez_package/folder
+PERSONAL_WORK_AREA=/some/network/folder rb
+PERSONAL_WORK_AREA=/some/network/folder rp
+```
+
+``rp`` will print out a Rez environment variable like
+
+```
+REZ_PACKAGES_PATH=/some/network/folder:$REZ_PACKAGES_PATH
+```
+
+And you can send that environment variable to other people.
