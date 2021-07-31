@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $current_directory/../common/common.sh
+
+set_config
+
+echo "REZ_PACKAGES_PATH=`rez-config local_packages_path`:$REZ_PACKAGES_PATH"

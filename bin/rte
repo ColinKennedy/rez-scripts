@@ -6,9 +6,8 @@ function join_by { local d=$1; shift; local f=$1; shift; printf %s "$f" "${@/#/$
 current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $current_directory/../common/common.sh
 
+set_config
 
-branch_name=`git rev-parse --abbrev-ref HEAD`
-stage_path=${PERSONAL_WORK_AREA:-~/scratch}/$branch_name
 parser=$current_directory/../common/rez_yaml_tester.awk
 request=$1
 
@@ -19,7 +18,6 @@ then
     exit 1
 fi
 
-package_name=`get_local_package_name $PWD`
 nearest_package=`find_nearest_rez_package $PWD`
 
 if [ -z $nearest_package ]
@@ -29,11 +27,12 @@ then
     exit 1
 fi
 
-requirements=$(REZ_PACKAGES_PATH=$(dirname $(dirname $nearest_package)) rez-view $package_name 2> /dev/null | awk --assign=request="$request" --file $parser)
+package_name=`get_local_package_name $PWD`
+requirements=`rez-view $package_name 2> /dev/null | awk --assign=request="$request" --file $parser`
 
 if [ -z "$requirements" ]
 then
-    options=$(REZ_PACKAGES_PATH=$stage_path:$(get_release_path) rez-test --list $package_name)
+    options=`rez-test --list $package_name`
     # Reference: https://unix.stackexchange.com/a/163814/290614
     tests=`echo $options | tr ' ' '\n' | grep $request`
 
@@ -47,12 +46,5 @@ fi
 requirements=`echo $requirements | sort | uniq`
 packages="$package_name `join_by " " "$requirements"`"
 shell=bash
-full_path=$stage_path:`get_release_path`
 
-echo "Resolving to local stage: $stage_path"
-echo "REZ_PACKAGES_PATH=$full_path rez-env $packages --shell $shell"
-
-REZ_PACKAGES_PATH=$full_path rez-env $packages --shell $shell
-
-echo "Completed"
-echo "REZ_PACKAGES_PATH=$full_path rez-env $packages --shell $shell"
+rez-env $packages --shell $shell

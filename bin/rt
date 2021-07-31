@@ -3,19 +3,25 @@
 current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $current_directory/../common/common.sh
 
-branch_name=`git rev-parse --abbrev-ref HEAD`
-stage_path=${PERSONAL_WORK_AREA:-~/scratch}/$branch_name
+set_config
 
 
-# Reference: https://stackoverflow.com/a/7989493/3626104
-if [ $# -lt 2 ]; then
+_parse_test_query() {
+    if [ $# -eq 2 ]; then
+        echo $1
+        echo $2
+
+        return 0
+    fi
+
+    # Reference: https://stackoverflow.com/a/7989493/3626104
     nearest_package=`find_nearest_rez_package $PWD`
 
     if [ -z "$nearest_package" ]
     then
         echo >&2 "No Rez package could be auto-detected."
 
-        exit 1
+        return 1
     fi
 
     cd `dirname $nearest_package`  # We cd into the package before tests run
@@ -24,19 +30,27 @@ if [ $# -lt 2 ]; then
     then
         package_name=`get_local_package_name $PWD`
     else
-        echo "You are not located inside of a Rez package" >&2
+        echo >&2 "You are not located inside of a Rez package"
 
-        exit 1
+        return 2
     fi
 
-    test_query=$1
-else
+    echo $package_name $1
+
+    return 0
+}
+
+_get_tests_to_run() {
     package_name=$1
     test_query=$2
-fi
 
-if [[ $test_query == *"*"* ]]; then
-    options=$(REZ_PACKAGES_PATH=$stage_path:$(get_release_path) rez-test --list $package_name)
+    if [[ $test_query != *"*"* ]]; then
+        echo $test_query
+
+        return 0
+    fi
+
+    options=`rez-test --list $package_name`
     # Reference: https://unix.stackexchange.com/a/163814/290614
     tests=`echo $options | tr ' ' '\n' | grep $test_query`
 
@@ -45,12 +59,24 @@ if [[ $test_query == *"*"* ]]; then
 
         exit 1
     fi
-else
-    tests=($test_query)
+
+    echo $tests
+}
+
+user_input=`_parse_test_query $@`
+return_value=$?
+
+if [ ! $return_value -eq 0 ]; then
+    echo >&2 "Package name / test data could not be parsed."
+
+    exit 1
 fi
 
+package_name=`echo $user_input | cut -d' ' -f1`
+tests=`_get_tests_to_run $user_input`
+
 if [[ -z "$tests" ]]; then
-    do_test $stage_path $package_name
+    rez-test $package_name
 else
-    do_test $stage_path $package_name $tests
+    rez-test $package_name $tests
 fi

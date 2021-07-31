@@ -3,28 +3,14 @@
 current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $current_directory/../common/common.sh
 
-
-branch_name=`git rev-parse --abbrev-ref HEAD`
-stage_path=${PERSONAL_WORK_AREA:-~/scratch}/$branch_name
-full_path=$stage_path:`get_release_path`
-
-nearest_package=`find_nearest_rez_package $PWD`
-
-if [ -z $nearest_package ]
-then
-    echo >&2 "Cannot continue."
-
-    exit 1
+# Reference: https://stackoverflow.com/a/7989493/3626104
+if [ $# -lt 1 ]; then
+    package_name=`get_local_package_name $PWD`
+else
+    package_name="${@}"
 fi
 
-cd `dirname $nearest_package`  # We cd into the package before the build runs
-
 arguments=$@
+set_config
 
-echo "Building to local stage: $stage_path"
-echo "REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $arguments"
-
-REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $arguments
-
-echo "Completed"
-echo "REZ_PACKAGES_PATH=$full_path rez-build --clean --install --prefix $stage_path -- --symlink $arguments"
+rez-build --clean --install $arguments
