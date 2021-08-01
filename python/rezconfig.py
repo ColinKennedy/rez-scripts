@@ -8,6 +8,7 @@ and use it for any building, Rez resolving, etc.
 import os
 import subprocess
 
+from rez import rezconfig
 from rez.config import config
 
 
@@ -53,4 +54,4 @@ def _local_packages_path():
     return os.path.join(base, branch)
 
 local_packages_path = _local_packages_path()
-packages_path = ModifyList(prepend=[local_packages_path])
+packages_path = [local_packages_path, rezconfig.release_packages_path]
