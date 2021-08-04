@@ -5,4 +5,4 @@ source $current_directory/../common/common.sh
 
 set_config
 
-echo "REZ_PACKAGES_PATH=`rez-config packages_path --json | sed 's#", "#:#g ; s/"//g ; s/]//g ; s/\[//g'`
+echo "REZ_PACKAGES_PATH=`rez-config packages_path --json | sed 's#", "#:#g ; s/"//g ; s/]//g ; s/\[//g'`"
