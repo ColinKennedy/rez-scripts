@@ -113,5 +113,15 @@ set_config() {
     current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     parent=`dirname $current_directory`
 
+    # Our rezconfig.py will modify the user's local_packages_path and packages_path.
+    #
+    # Rez prefers environment variables over config files, so we need to
+    # temporarily remove any environment variables that we plan to modify,
+    # otherwise the user's environment will prevent the scripts in this
+    # repository from working.
+    #
+    unset REZ_LOCAL_PACKAGES_PATH
+    unset REZ_PACKAGES_PATH
+
     export REZ_CONFIG_FILE=${PERSONAL_CONFIG_FILE-$parent/python/rezconfig.py}:$REZ_CONFIG_FILE
 }
