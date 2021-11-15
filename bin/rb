@@ -12,5 +12,6 @@ fi
 
 arguments=$@
 set_config
+cd_package_root
 
 rez-build --clean --install $arguments

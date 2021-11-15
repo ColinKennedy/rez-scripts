@@ -109,6 +109,14 @@ get_release_path() {
 }
 
 
+cd_package_root() {
+    package=`find_nearest_rez_package $PWD`
+    directory=`dirname $package`
+
+    cd $directory
+}
+
+
 set_config() {
     current_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     parent=`dirname $current_directory`
